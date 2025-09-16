@@ -52,7 +52,15 @@ export interface FacilityAssessmentResults {
   totalScore: number;
   maxTotalScore: number;
   overallPercentage: number;
-  recommendations: string[];
+  recommendations: QuestionRecommendation[];
+}
+
+export interface QuestionRecommendation {
+  questionTitle: string;
+  selectedAnswer: string;
+  selectedAnswerDescription?: string;
+  conditionalNextStep?: string;
+  score: number;
 }
 
 export interface EMISSpecsData {

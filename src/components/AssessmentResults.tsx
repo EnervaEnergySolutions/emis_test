@@ -1,5 +1,5 @@
 import React from 'react';
-import { FacilityAssessmentResults } from '../types';
+import { FacilityAssessmentResults, QuestionRecommendation } from '../types';
 import SpiderChart from './SpiderChart';
 import { Download, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
 
@@ -262,9 +262,16 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
 
           <h2>Detailed Assessment Findings</h2>
           <div class="recommendation">
-            <h4>Specific Facility Characteristics:</h4>
+            <h4>Detailed Question Analysis and Next Steps:</h4>
             <ul>
-              ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+              ${results.recommendations.map(rec => `
+                <li>
+                  <strong>${rec.questionTitle}</strong><br/>
+                  Selected Answer: ${rec.selectedAnswer} (${rec.score} pts)<br/>
+                  ${rec.selectedAnswerDescription ? `Assessment: This facility ${rec.selectedAnswerDescription}<br/>` : ''}
+                  ${rec.conditionalNextStep ? `<em>Next Steps: ${rec.conditionalNextStep}</em>` : '<em>Performance meets recommended thresholds.</em>'}
+                </li>
+              `).join('')}
             </ul>
           </div>
 
@@ -378,13 +385,79 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
 
         {/* Specific Facility Findings */}
         <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Specific Facility Characteristics</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Detailed Question Analysis and Next Steps</h3>
+          <div className="space-y-3">
+            {results.recommendations.map((recommendation, index) => (
+              <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                <div className="mb-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">{recommendation.questionTitle}</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gray-700"><strong>Selected Answer:</strong> {recommendation.selectedAnswer}</span>
+                    <span className="text-sm font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                      {recommendation.score} pts
+                    </span>
+                  </div>
+                  {recommendation.selectedAnswerDescription && (
+                    <p className="text-gray-600 mb-3">
+                      <strong>Assessment:</strong> This facility {recommendation.selectedAnswerDescription}
+                    </p>
+                  )}
+                </div>
+                
+                {recommendation.conditionalNextStep && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-start space-x-3">
+                      <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-yellow-800 mb-1">Recommended Next Steps:</p>
+                        <p className="text-sm text-yellow-700">{recommendation.conditionalNextStep}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {!recommendation.conditionalNextStep && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <p className="text-sm text-green-700">Performance meets or exceeds recommended thresholds.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* General Section Recommendations */}
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">General Section Improvement Recommendations</h3>
+          <div className="space-y-4">
+            {results.sections.map((section, index) => (
+              <div key={index} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-900 mb-2">{section.title} ({section.percentage}%)</h4>
+                <ul className="space-y-1">
+                  {getSectionRecommendations(section).map((rec, recIndex) => (
+                    <li key={recIndex} className="text-sm text-blue-800 flex items-start">
+                      <span className="text-blue-600 mr-2">•</span>
+                      <span>{rec}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Legacy section for backward compatibility - can be removed if not needed */}
+        <div className="mb-8" style={{ display: 'none' }}>
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Legacy Recommendations</h3>
           <div className="space-y-3">
             {results.recommendations.map((recommendation, index) => (
               <div key={index} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-start space-x-3">
                   <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-blue-800">{recommendation}</p>
+                  <p className="text-blue-800">Legacy format would go here</p>
                 </div>
               </div>
             ))}
