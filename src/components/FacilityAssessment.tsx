@@ -299,7 +299,7 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
               onChange={(e) => handleSliderChange(question.id, parseInt(e.target.value))}
               className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               style={{
-                background: `linear-gradient(to right, #ef4444 0%, #f59e0b 25%, #eab308 50%, #22c55e 75%, #16a34a 100%)`
+                background: `linear-gradient(to left, #ef4444 0%, #f59e0b 25%, #eab308 50%, #22c55e 75%, #16a34a 100%)`
               }}
             />
             <div className="flex justify-between text-xs text-gray-600 mt-2 px-1">
