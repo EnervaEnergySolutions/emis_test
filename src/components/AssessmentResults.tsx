@@ -480,6 +480,16 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
             <button
               onClick={onBack}
               className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+            >
+              Back to Assessment
+            </button>
+            
+            <button
+              onClick={onContinue}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Continue
+            </button>
           </div>
         </div>
       </div>
