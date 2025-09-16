@@ -420,7 +420,7 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
                   <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                     <div className="flex items-center space-x-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <p className="text-sm text-green-700">Performance meets or exceeds recommended thresholds.</p>
+                      <p className="text-sm text-green-700">Performance meets recommended thresholds.</p>
                     </div>
                   </div>
                 )}

@@ -116,54 +116,54 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
       // Define next steps based on the question patterns from your data
       const nextStepsMap: { [key: string]: { threshold: number; text: string } } = {
         // Energy Meters section
-        'q1_eac_identification': { threshold: 7, text: 'Clarify and refine EAC definitions immediately if the score is below 7.' },
-        'q2_submetering_coverage': { threshold: 7, text: 'Increase sub-metering coverage if the score is below 7.' },
-        'q3_meter_types': { threshold: 7, text: 'Replace or recalibrate meters scoring below 7.' },
-        'q4_installation_quality': { threshold: 4, text: 'Correct installation issues immediately if score below 4.' },
-        'q5_meter_accuracy': { threshold: 4, text: 'Prioritize calibration if accuracy is below 4.' },
+        'q1_eac_identification': { threshold: 7, text: 'Clarify and refine EAC definitions immediately' },
+        'q2_submetering_coverage': { threshold: 7, text: 'Increase sub-metering coverage' },
+        'q3_meter_types': { threshold: 7, text: 'Replace or recalibrate meters' },
+        'q4_installation_quality': { threshold: 4, text: 'Correct installation issues immediately' },
+        'q5_meter_accuracy': { threshold: 4, text: 'Prioritize calibration' },
         
         // Relevant Variables section
-        'q6_key_drivers': { threshold: 7, text: 'Improve driver identification if coverage below 7.' },
-        'q7_driver_measurement': { threshold: 7, text: 'Establish proper correlation measures if below 7.' },
-        'q8_driver_measurement_correct': { threshold: 7, text: 'Implement or improve measurement procedures immediately if below 7.' },
+        'q6_key_drivers': { threshold: 7, text: 'Improve driver identification' },
+        'q7_driver_measurement': { threshold: 7, text: 'Establish proper correlation measures' },
+        'q8_driver_measurement_correct': { threshold: 7, text: 'Implement or improve measurement procedures immediately' },
         
         // Data Capture and Storage section
-        'q9_meter_reading_effort': { threshold: 4, text: 'Enhance automation if below 4.' },
-        'q10_data_entry_effort': { threshold: 4, text: 'Transition to automated data entry if below 4.' },
-        'q11_error_checking': { threshold: 4, text: 'Automate error checking if below 4.' },
-        'q12_data_capture_frequency': { threshold: 7, text: 'Adjust data capture systems immediately if below 7.' },
-        'q13_historical_storage': { threshold: 4, text: 'Upgrade or configure storage system immediately if below 4.' },
+        'q9_meter_reading_effort': { threshold: 4, text: 'Enhance automation' },
+        'q10_data_entry_effort': { threshold: 4, text: 'Transition to automated data entry' },
+        'q11_error_checking': { threshold: 4, text: 'Automate error checking' },
+        'q12_data_capture_frequency': { threshold: 7, text: 'Adjust data capture systems immediately' },
+        'q13_historical_storage': { threshold: 4, text: 'Upgrade or configure storage system immediately' },
         
         // Data Analysis section
-        'q14_analysis_complexity': { threshold: 3, text: 'Enhance system capabilities if below 3.' },
-        'q15_integration_capture': { threshold: 3, text: 'Integrate systems more closely if below 3.' },
-        'q16_performance_drivers': { threshold: 7, text: 'Enhance statistical analysis if below 7.' },
-        'q17_analysis_flexibility': { threshold: 7, text: 'Upgrade system flexibility if below 7.' },
-        'q18_aggregation_flexibility': { threshold: 4, text: 'Improve aggregation capabilities if below 4.' },
+        'q14_analysis_complexity': { threshold: 3, text: 'Enhance system capabilities' },
+        'q15_integration_capture': { threshold: 3, text: 'Integrate systems more closely' },
+        'q16_performance_drivers': { threshold: 7, text: 'Enhance statistical analysis' },
+        'q17_analysis_flexibility': { threshold: 7, text: 'Upgrade system flexibility' },
+        'q18_aggregation_flexibility': { threshold: 4, text: 'Improve aggregation capabilities' },
         
         // Target Setting section
-        'q19_target_basis': { threshold: 7, text: 'Strengthen analytical basis if below 7.' },
-        'q20_target_realism': { threshold: 7, text: 'Revise targets realistically if below 7.' },
-        'q21_target_acceptance': { threshold: 7, text: 'Improve owner engagement if below 7.' },
-        'q22_eac_accountability': { threshold: 4, text: 'Empower EAC owners if below 4.' },
-        'q23_target_inclusiveness': { threshold: 4, text: 'Increase involvement if below 4.' },
+        'q19_target_basis': { threshold: 7, text: 'Strengthen analytical basis' },
+        'q20_target_realism': { threshold: 7, text: 'Revise targets realistically' },
+        'q21_target_acceptance': { threshold: 7, text: 'Improve owner engagement' },
+        'q22_eac_accountability': { threshold: 4, text: 'Empower EAC owners' },
+        'q23_target_inclusiveness': { threshold: 4, text: 'Increase involvement' },
         
         // Energy Performance Reporting section
-        'q24_report_production': { threshold: 3, text: 'Automate report generation to improve timeliness if below 3.' },
-        'q25_report_responsibility': { threshold: 3, text: 'Develop broader report generation skills if below 3.' },
-        'q26_report_timeliness': { threshold: 3, text: 'Improve automation and scheduling if below 3.' },
-        'q27_report_userfriendly': { threshold: 3, text: 'Simplify reports for clarity if below 3.' },
-        'q28_report_content': { threshold: 3, text: 'Streamline content if below 3.' },
-        'q29_report_accessibility': { threshold: 3, text: 'Ensure relevant stakeholder access if below 3.' },
-        'q30_drilldown_capability': { threshold: 3, text: 'Enhance data consistency and drill-down capabilities if below 3.' },
-        'q31_it_integration': { threshold: 3, text: 'Enhance system integration if below 3.' },
+        'q24_report_production': { threshold: 3, text: 'Automate report generation to improve timeliness' },
+        'q25_report_responsibility': { threshold: 3, text: 'Develop broader report generation skills' },
+        'q26_report_timeliness': { threshold: 3, text: 'Improve automation and scheduling' },
+        'q27_report_userfriendly': { threshold: 3, text: 'Simplify reports for clarity' },
+        'q28_report_content': { threshold: 3, text: 'Streamline content' },
+        'q29_report_accessibility': { threshold: 3, text: 'Ensure relevant stakeholder access' },
+        'q30_drilldown_capability': { threshold: 3, text: 'Enhance data consistency and drill-down capabilities' },
+        'q31_it_integration': { threshold: 3, text: 'Enhance system integration' },
         
         // System Support Skills section
-        'q32_maintenance_capability': { threshold: 3, text: 'Strengthen internal skills if below 3.' },
-        'q33_network_integration': { threshold: 3, text: 'Integrate networks effectively if below 3.' },
-        'q34_it_environment': { threshold: 3, text: 'Update IT environment promptly if below 3.' },
-        'q35_emis_operation': { threshold: 3, text: 'Improve internal technical training if below 3.' },
-        'q36_analytical_skills': { threshold: 3, text: 'Enhance analytical training if below 3.' }
+        'q32_maintenance_capability': { threshold: 3, text: 'Strengthen internal skills' },
+        'q33_network_integration': { threshold: 3, text: 'Integrate networks effectively' },
+        'q34_it_environment': { threshold: 3, text: 'Update IT environment promptly' },
+        'q35_emis_operation': { threshold: 3, text: 'Improve internal technical training' },
+        'q36_analytical_skills': { threshold: 3, text: 'Enhance analytical training' }
       };
 
       const nextStepConfig = nextStepsMap[question.id];
