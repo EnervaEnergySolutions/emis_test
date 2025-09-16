@@ -125,6 +125,7 @@ Score each meter with one point for each item above. Average based on total numb
       { text: 'Accurate and maintained', score: 5, description: 'has accurate and well-maintained meters that provide reliable data for energy management.' }
     ],
     isSlider: true,
+    isPercentageBased: true,
     sliderLabels: ['Unreliable', 'Poor', 'Fair', 'Good', 'Very Good', 'Accurate & Maintained'],
     maxScore: 5
   },
@@ -219,6 +220,7 @@ Manual data collection and entry systems become unreliable and cannot offer high
       { text: 'Energy meters are not in place or not accessible.', score: 0, description: 'has energy meters that are not in place or not accessible.' }
     ],
     isSlider: true,
+    isPercentageBased: false,
     sliderLabels: ['Not Functional', 'Manual Only', 'Manual + Database', 'Partial Auto', 'Mostly Auto', 'Fully Automated'],
     maxScore: 5
   },
@@ -243,6 +245,7 @@ Data entry is an assigned duty with back-up people assigned to cover vacation an
       { text: 'No database exists.', score: 0, description: 'has no database.' }
     ],
     isSlider: true,
+    isPercentageBased: false,
     sliderLabels: ['No Database', 'Excel Only', 'Manual Database', 'Partial Auto', 'Fully Automated'],
     maxScore: 5
   },
@@ -271,6 +274,7 @@ Score based on impressions of whether any error check systems are in place or re
       { text: 'Data is not cross checked against any expected values and no error status on metering observed.', score: 0, description: 'does not cross-check data and has no error status on metering.' }
     ],
     isSlider: true,
+    isPercentageBased: false,
     sliderLabels: ['None', 'Manual Check', 'Manual + Adjust', 'Partial Auto', 'Comprehensive Auto'],
     maxScore: 5
   },
