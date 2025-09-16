@@ -93,241 +93,270 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
   };
 
   const downloadWord = () => {
-    const content = document.getElementById('assessment-results');
-    if (!content) return;
-
-    // For Word export, we'll skip the chart image and provide a text-based alternative
-    // Word's HTML rendering is too limited for reliable canvas image embedding
-    const chartError = true; // Always use fallback for Word export
-    let chartImageData = '';
-
-    const htmlContent = `
-      <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-             xmlns:w='urn:schemas-microsoft-com:office:word' 
-             xmlns='http://www.w3.org/TR/REC-html40'>
-        <head>
-          <meta charset='utf-8'>
-          <title>EMIS Assessment Results</title>
-          <style>
-            body { 
-              font-family: 'Calibri', 'Arial', sans-serif; 
-              margin: 40px; 
-              line-height: 1.6; 
-              color: #333;
-            }
-            .header { 
-              text-align: center; 
-              margin-bottom: 30px; 
-              border-bottom: 2px solid #3B82F6;
-              padding-bottom: 20px;
-            }
-            .header h1 {
-              color: #3B82F6;
-              font-size: 24px;
-              margin-bottom: 10px;
-            }
-            .overall-score {
-              background: #f0f9ff;
-              padding: 20px;
-              border-radius: 8px;
-              margin: 20px 0;
-              text-align: center;
-              border: 1px solid #3B82F6;
-            }
-            .section { 
-              margin-bottom: 25px; 
-              padding: 20px; 
-              border-left: 4px solid #3B82F6;
-              background: #f9f9f9;
-              page-break-inside: avoid;
-            }
-            .section h3 {
-              color: #3B82F6;
-              margin-bottom: 15px;
-              font-size: 18px;
-            }
-            .score { 
-              font-weight: bold; 
-              color: #3B82F6;
-              font-size: 16px;
-            }
-            .recommendation { 
-              background: #e0f2fe; 
-              padding: 15px; 
-              margin: 15px 0; 
-              border-radius: 5px;
-              border-left: 3px solid #0288d1;
-            }
-            .recommendation h4 {
-              color: #0288d1;
-              margin-bottom: 10px;
-            }
-            h1, h2, h3 { 
-              color: #3B82F6; 
-              page-break-after: avoid;
-            }
-            h2 {
-              font-size: 20px;
-              margin-top: 30px;
-              margin-bottom: 15px;
-            }
-            ul {
-              margin: 10px 0 10px 20px;
-            }
-            li {
-              margin-bottom: 8px;
-            }
-            .description {
-              font-style: italic;
-              color: #666;
-              margin-bottom: 15px;
-              padding: 10px;
-              background: #f5f5f5;
-              border-radius: 4px;
-            }
-            .progress-bar {
-              width: 100%;
-              height: 20px;
-              background: #e0e0e0;
-              border-radius: 10px;
-              overflow: hidden;
-              margin: 10px 0;
-            }
-            .progress-fill {
-              height: 100%;
-              background: #3B82F6;
-              border-radius: 10px;
-            }
-            .chart-container {
-              text-align: center;
-              margin: 20px 0;
-              page-break-inside: avoid;
-            }
-            .chart-image {
-              max-width: 100%;
-              height: auto;
-              border: 1px solid #ddd;
-              border-radius: 8px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>EMIS Assessment Results</h1>
-            <p>Energy Management Information System Evaluation Report</p>
-            <p><strong>Assessment Date:</strong> ${new Date().toLocaleDateString()}</p>
-          </div>
-
-          <div class="overall-score">
-            <h2>Overall Assessment Score</h2>
-            <div class="score">${results.overallPercentage}% (${results.totalScore}/${results.maxTotalScore} points)</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${results.overallPercentage}%"></div>
-            </div>
-          </div>
-
-          <h2>Executive Summary</h2>
-          <p>This assessment evaluates your facility's Energy Management Information System (EMIS) across seven critical areas. The overall score of ${results.overallPercentage}% indicates ${results.overallPercentage >= 80 ? 'excellent' : results.overallPercentage >= 60 ? 'good' : results.overallPercentage >= 40 ? 'moderate' : 'significant improvement needed'} EMIS capabilities.</p>
-
-          ${chartImageData ? `
-          <div class="chart-container">
-            <h2>Performance Overview - Spider Chart</h2>
-            <img src="${chartImageData}" alt="EMIS Performance Spider Chart" class="chart-image" />
-          </div>
-          ` : `
-          <div class="chart-container">
-            <h2>Performance Overview - Spider Chart</h2>
-            <div style="border: 1px solid #ddd; padding: 20px; background: #f9f9f9; margin: 20px 0;">
-              <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
-                <thead>
-                  <tr style="background: #3B82F6; color: white;">
-                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Section</th>
-                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Score</th>
-                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Percentage</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${results.sections.map(section => `
-                    <tr>
-                      <td style="border: 1px solid #ddd; padding: 10px;">${section.title}</td>
-                      <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${section.totalScore}/${section.maxScore}</td>
-                      <td style="border: 1px solid #ddd; padding: 10px; text-align: center; font-weight: bold; color: ${section.percentage >= 70 ? '#16a34a' : section.percentage >= 50 ? '#f59e0b' : '#ef4444'};">${section.percentage}%</td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-              <p style="color: #666; font-size: 12px; margin-top: 15px; font-style: italic;">
-                Note: This table replaces the spider chart visualization for better compatibility with Word format.
-              </p>
-            </div>
-          </div>
-          `}
-
-          <h2>Section Performance Analysis</h2>
-          ${results.sections.map(section => `
-            <div class="section">
-              <h3>${section.title}</h3>
-              <div class="score">Score: ${section.percentage}% (${section.totalScore}/${section.maxScore} points)</div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: ${section.percentage}%"></div>
-              </div>
-              
-              <div class="description">
-                ${getSectionDescription(section.title)}
-              </div>
-
-              <div class="recommendation">
-                <h4>Recommendations for ${section.title}:</h4>
-                <ul>
-                  ${getSectionRecommendations(section).map(rec => `<li>${rec}</li>`).join('')}
-                </ul>
-              </div>
-            </div>
-          `).join('')}
-
-          <h2>Detailed Assessment Findings</h2>
-          <div class="recommendation">
-            <h4>Detailed Question Analysis and Next Steps:</h4>
-            <ul>
-              ${results.recommendations.map(rec => `
-                <li>
-                  <strong>${rec.questionTitle}</strong><br/>
-                  Selected Answer: ${rec.selectedAnswer} (${rec.score} pts)<br/>
-                  ${rec.selectedAnswerDescription ? `Assessment: This facility ${rec.selectedAnswerDescription}<br/>` : ''}
-                  ${rec.conditionalNextStep ? `<em>Next Steps: ${rec.conditionalNextStep}</em>` : ''}
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-
-          <h2>Next Steps and Implementation Priorities</h2>
-          <p>Based on this comprehensive assessment, we recommend focusing on the lowest-scoring sections first. Sections scoring below 70% should be prioritized for immediate improvement. Consider developing an action plan that addresses the specific recommendations for each section.</p>
+    const downloadWithChart = async () => {
+      let chartImageData = '';
+      
+      try {
+        // Wait a bit to ensure chart is fully rendered
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Try multiple methods to find the canvas
+        let canvas = document.querySelector('#spider-chart-canvas-container canvas') as HTMLCanvasElement;
+        
+        if (!canvas) {
+          // Try alternative selectors
+          canvas = document.querySelector('canvas') as HTMLCanvasElement;
+        }
+        
+        if (!canvas) {
+          // Try finding by Chart.js class
+          canvas = document.querySelector('.chartjs-render-monitor') as HTMLCanvasElement;
+        }
+        
+        if (canvas) {
+          console.log('Canvas found:', canvas);
           
-          <div class="recommendation">
-            <h4>Priority Actions:</h4>
-            <ol>
-              <li><strong>Immediate (0-3 months):</strong> Address sections scoring below 50%</li>
-              <li><strong>Short-term (3-6 months):</strong> Improve sections scoring 50-70%</li>
-              <li><strong>Medium-term (6-12 months):</strong> Optimize sections scoring above 70%</li>
-              <li><strong>Ongoing:</strong> Maintain and continuously improve all systems</li>
-            </ol>
-          </div>
+          // Create a new canvas with white background for better Word compatibility
+          const tempCanvas = document.createElement('canvas');
+          const tempCtx = tempCanvas.getContext('2d');
+          
+          if (tempCtx) {
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            
+            // Fill with white background
+            tempCtx.fillStyle = 'white';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // Draw the chart on top
+            tempCtx.drawImage(canvas, 0, 0);
+            
+            // Convert to base64 with high quality
+            chartImageData = tempCanvas.toDataURL('image/png', 1.0);
+            console.log('Chart image captured successfully, size:', chartImageData.length);
+          }
+        } else {
+          console.warn('Canvas element not found for chart export');
+        }
+      } catch (error) {
+        console.error('Error capturing chart:', error);
+      }
 
-          <h2>Conclusion</h2>
-          <p>This EMIS assessment provides a comprehensive evaluation of your facility's energy management capabilities. The detailed findings and recommendations should guide your energy management improvement efforts and help prioritize investments in EMIS enhancements.</p>
-        </body>
-      </html>
-    `;
+      const htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+               xmlns:w='urn:schemas-microsoft-com:office:word' 
+               xmlns='http://www.w3.org/TR/REC-html40'>
+          <head>
+            <meta charset='utf-8'>
+            <title>EMIS Assessment Results</title>
+            <style>
+              body { 
+                font-family: 'Calibri', 'Arial', sans-serif; 
+                margin: 40px; 
+                line-height: 1.6; 
+                color: #333;
+              }
+              .header { 
+                text-align: center; 
+                margin-bottom: 30px; 
+                border-bottom: 2px solid #3B82F6;
+                padding-bottom: 20px;
+              }
+              .header h1 {
+                color: #3B82F6;
+                font-size: 24px;
+                margin-bottom: 10px;
+              }
+              .overall-score {
+                background: #f0f9ff;
+                padding: 20px;
+                border-radius: 8px;
+                margin: 20px 0;
+                text-align: center;
+                border: 1px solid #3B82F6;
+              }
+              .section { 
+                margin-bottom: 25px; 
+                padding: 20px; 
+                border-left: 4px solid #3B82F6;
+                background: #f9f9f9;
+                page-break-inside: avoid;
+              }
+              .section h3 {
+                color: #3B82F6;
+                margin-bottom: 15px;
+                font-size: 18px;
+              }
+              .score { 
+                font-weight: bold; 
+                color: #3B82F6;
+                font-size: 16px;
+              }
+              .recommendation { 
+                background: #e0f2fe; 
+                padding: 15px; 
+                margin: 15px 0; 
+                border-radius: 5px;
+                border-left: 3px solid #0288d1;
+              }
+              .recommendation h4 {
+                color: #0288d1;
+                margin-bottom: 10px;
+              }
+              h1, h2, h3 { 
+                color: #3B82F6; 
+                page-break-after: avoid;
+              }
+              h2 {
+                font-size: 20px;
+                margin-top: 30px;
+                margin-bottom: 15px;
+              }
+              ul {
+                margin: 10px 0 10px 20px;
+              }
+              li {
+                margin-bottom: 8px;
+              }
+              .description {
+                font-style: italic;
+                color: #666;
+                margin-bottom: 15px;
+                padding: 10px;
+                background: #f5f5f5;
+                border-radius: 4px;
+              }
+              .progress-bar {
+                width: 100%;
+                height: 20px;
+                background: #e0e0e0;
+                border-radius: 10px;
+                overflow: hidden;
+                margin: 10px 0;
+              }
+              .progress-fill {
+                height: 100%;
+                background: #3B82F6;
+                border-radius: 10px;
+              }
+              .chart-container {
+                text-align: center;
+                margin: 20px 0;
+                page-break-inside: avoid;
+              }
+              .chart-image {
+                max-width: 600px;
+                height: auto;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h1>EMIS Assessment Results</h1>
+              <p>Energy Management Information System Evaluation Report</p>
+              <p><strong>Assessment Date:</strong> ${new Date().toLocaleDateString()}</p>
+            </div>
 
-    const blob = new Blob([htmlContent], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'EMIS_Assessment_Results.doc';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+            <div class="overall-score">
+              <h2>Overall Assessment Score</h2>
+              <div class="score">${results.overallPercentage}% (${results.totalScore}/${results.maxTotalScore} points)</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${results.overallPercentage}%"></div>
+              </div>
+            </div>
+
+            <h2>Executive Summary</h2>
+            <p>This assessment evaluates your facility's Energy Management Information System (EMIS) across seven critical areas. The overall score of ${results.overallPercentage}% indicates ${results.overallPercentage >= 80 ? 'excellent' : results.overallPercentage >= 60 ? 'good' : results.overallPercentage >= 40 ? 'moderate' : 'significant improvement needed'} EMIS capabilities.</p>
+
+            ${chartImageData ? `
+            <div class="chart-container">
+              <h2>Performance Overview - Spider Chart</h2>
+              <img src="${chartImageData}" alt="EMIS Performance Spider Chart" class="chart-image" />
+            </div>
+            ` : `
+            <div class="chart-container">
+              <h2>Performance Overview - Spider Chart</h2>
+              <div style="border: 2px solid #ef4444; padding: 20px; background: #fef2f2; margin: 20px 0; border-radius: 8px;">
+                <p style="color: #dc2626; font-weight: bold; margin-bottom: 10px;">⚠️ Spider Chart Not Available</p>
+                <p style="color: #666; font-size: 14px;">
+                  The spider chart could not be captured for this Word document. This may be due to browser security restrictions or timing issues. 
+                  Please refer to the detailed section scores below for the same information that would be displayed in the chart.
+                </p>
+              </div>
+            </div>
+            `}
+
+            <h2>Section Performance Analysis</h2>
+            ${results.sections.map(section => `
+              <div class="section">
+                <h3>${section.title}</h3>
+                <div class="score">Score: ${section.percentage}% (${section.totalScore}/${section.maxScore} points)</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${section.percentage}%"></div>
+                </div>
+                
+                <div class="description">
+                  ${getSectionDescription(section.title)}
+                </div>
+
+                <div class="recommendation">
+                  <h4>Recommendations for ${section.title}:</h4>
+                  <ul>
+                    ${getSectionRecommendations(section).map(rec => `<li>${rec}</li>`).join('')}
+                  </ul>
+                </div>
+              </div>
+            `).join('')}
+
+            <h2>Detailed Assessment Findings</h2>
+            <div class="recommendation">
+              <h4>Detailed Question Analysis and Next Steps:</h4>
+              <ul>
+                ${results.recommendations.map(rec => `
+                  <li>
+                    <strong>${rec.questionTitle}</strong><br/>
+                    Selected Answer: ${rec.selectedAnswer} (${rec.score} pts)<br/>
+                    ${rec.selectedAnswerDescription ? `Assessment: This facility ${rec.selectedAnswerDescription}<br/>` : ''}
+                    ${rec.conditionalNextStep ? `<em>Next Steps: ${rec.conditionalNextStep}</em>` : ''}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            <h2>Next Steps and Implementation Priorities</h2>
+            <p>Based on this comprehensive assessment, we recommend focusing on the lowest-scoring sections first. Sections scoring below 70% should be prioritized for immediate improvement. Consider developing an action plan that addresses the specific recommendations for each section.</p>
+            
+            <div class="recommendation">
+              <h4>Priority Actions:</h4>
+              <ol>
+                <li><strong>Immediate (0-3 months):</strong> Address sections scoring below 50%</li>
+                <li><strong>Short-term (3-6 months):</strong> Improve sections scoring 50-70%</li>
+                <li><strong>Medium-term (6-12 months):</strong> Optimize sections scoring above 70%</li>
+                <li><strong>Ongoing:</strong> Maintain and continuously improve all systems</li>
+              </ol>
+            </div>
+
+            <h2>Conclusion</h2>
+            <p>This EMIS assessment provides a comprehensive evaluation of your facility's energy management capabilities. The detailed findings and recommendations should guide your energy management improvement efforts and help prioritize investments in EMIS enhancements.</p>
+          </body>
+        </html>
+      `;
+
+      const blob = new Blob([htmlContent], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'EMIS_Assessment_Results.doc';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    // Call the async function
+    downloadWithChart();
   };
 
   return (
