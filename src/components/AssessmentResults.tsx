@@ -93,53 +93,73 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
   };
 
   const downloadWord = () => {
+    // Try a different approach using html2canvas library for better chart capture
     const downloadWithChart = async () => {
       let chartImageData = '';
       
       try {
-        // Wait a bit to ensure chart is fully rendered
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Import html2canvas dynamically
+        const html2canvas = (await import('html2canvas')).default;
         
-        // Try multiple methods to find the canvas
-        let canvas = document.querySelector('#spider-chart-canvas-container canvas') as HTMLCanvasElement;
+        // Wait for chart to be fully rendered
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
-        if (!canvas) {
-          // Try alternative selectors
-          canvas = document.querySelector('canvas') as HTMLCanvasElement;
-        }
+        // Find the spider chart container
+        const chartContainer = document.querySelector('#spider-chart-container .bg-gray-50') as HTMLElement;
         
-        if (!canvas) {
-          // Try finding by Chart.js class
-          canvas = document.querySelector('.chartjs-render-monitor') as HTMLCanvasElement;
-        }
-        
-        if (canvas) {
-          console.log('Canvas found:', canvas);
+        if (chartContainer) {
+          console.log('Chart container found, capturing with html2canvas...');
           
-          // Create a new canvas with white background for better Word compatibility
-          const tempCanvas = document.createElement('canvas');
-          const tempCtx = tempCanvas.getContext('2d');
+          // Use html2canvas to capture the entire chart container
+          const canvas = await html2canvas(chartContainer, {
+            backgroundColor: '#ffffff',
+            scale: 2, // Higher resolution
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            width: 600,
+            height: 400
+          });
           
-          if (tempCtx) {
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            
-            // Fill with white background
-            tempCtx.fillStyle = 'white';
-            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-            
-            // Draw the chart on top
-            tempCtx.drawImage(canvas, 0, 0);
-            
-            // Convert to base64 with high quality
-            chartImageData = tempCanvas.toDataURL('image/png', 1.0);
-            console.log('Chart image captured successfully, size:', chartImageData.length);
-          }
+          chartImageData = canvas.toDataURL('image/png', 0.9);
+          console.log('Chart captured successfully with html2canvas, size:', chartImageData.length);
         } else {
-          console.warn('Canvas element not found for chart export');
+          console.warn('Chart container not found for export');
         }
       } catch (error) {
-        console.error('Error capturing chart:', error);
+        console.error('Error capturing chart with html2canvas:', error);
+        
+        // Fallback to original canvas method
+        try {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          let canvas = document.querySelector('#spider-chart-container canvas') as HTMLCanvasElement;
+          
+          if (!canvas) {
+            canvas = document.querySelector('canvas') as HTMLCanvasElement;
+          }
+          
+          if (canvas) {
+            console.log('Fallback: Canvas found, capturing directly...');
+            
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            if (tempCtx) {
+              tempCanvas.width = canvas.width;
+              tempCanvas.height = canvas.height;
+              
+              tempCtx.fillStyle = 'white';
+              tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+              tempCtx.drawImage(canvas, 0, 0);
+              
+              chartImageData = tempCanvas.toDataURL('image/png', 0.9);
+              console.log('Fallback chart capture successful, size:', chartImageData.length);
+            }
+          }
+        } catch (fallbackError) {
+          console.error('Fallback chart capture also failed:', fallbackError);
+        }
       }
 
       const htmlContent = `

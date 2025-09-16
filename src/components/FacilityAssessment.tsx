@@ -100,7 +100,7 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
     const maxTotalScore = sectionResults.reduce((sum, s) => sum + s.maxScore, 0);
     const overallPercentage = maxTotalScore > 0 ? Math.round((totalScore / maxTotalScore) * 100) : 0;
 
-    // Generate specific recommendations based on actual answers and scores
+    // Generate specific recommendations based on actual answers and conditional next steps
     const recommendations: QuestionRecommendation[] = [];
     
     Object.values(answers).forEach(answer => {
@@ -110,10 +110,10 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
       const selectedOption = question.answerOptions.find(opt => opt.text === answer.value);
       if (!selectedOption) return;
 
-      // Determine conditional next step based on score
+      // Determine conditional next step based on score thresholds from the provided text
       let conditionalNextStep: string | undefined;
       
-      // Define next steps based on the question patterns from your data
+      // Define next steps based on the exact thresholds and text provided
       const nextStepsMap: { [key: string]: { threshold: number; text: string } } = {
         // Energy Meters section
         'q1_eac_identification': { threshold: 7, text: 'Clarify and refine EAC definitions immediately' },
