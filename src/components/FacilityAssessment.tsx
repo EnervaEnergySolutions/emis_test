@@ -576,7 +576,7 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .slider::-webkit-slider-thumb {
           appearance: none;
           height: 20px;
@@ -597,7 +597,6 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
           border: 2px solid white;
           box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-      `}</style>
     </div>
   );
 };

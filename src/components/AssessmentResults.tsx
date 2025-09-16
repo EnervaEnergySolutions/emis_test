@@ -96,26 +96,10 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
     const content = document.getElementById('assessment-results');
     if (!content) return;
 
-    // Create spider chart as base64 image with better error handling
-    const chartContainer = document.getElementById('spider-chart-container');
-    const canvas = chartContainer?.querySelector('canvas');
+    // For Word export, we'll skip the chart image and provide a text-based alternative
+    // Word's HTML rendering is too limited for reliable canvas image embedding
+    const chartError = true; // Always use fallback for Word export
     let chartImageData = '';
-    let chartError = false;
-    
-    if (canvas) {
-      try {
-        // Wait a moment for chart to fully render
-        setTimeout(() => {
-          chartImageData = canvas.toDataURL('image/png', 0.8);
-        }, 100);
-        chartImageData = canvas.toDataURL('image/png', 0.8);
-      } catch (error) {
-        console.error('Error capturing chart:', error);
-        chartError = true;
-      }
-    } else {
-      chartError = true;
-    }
 
     const htmlContent = `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' 
@@ -253,9 +237,28 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
           ` : `
           <div class="chart-container">
             <h2>Performance Overview - Spider Chart</h2>
-            <div style="border: 2px dashed #ccc; padding: 40px; text-align: center; background: #f9f9f9; margin: 20px 0;">
-              <p style="color: #666; font-style: italic;">Spider Chart visualization showing performance across all assessment sections</p>
-              <p style="color: #666; font-size: 12px; margin-top: 10px;">Note: Chart visualization may not display in Word format. Please refer to the detailed section scores below.</p>
+            <div style="border: 1px solid #ddd; padding: 20px; background: #f9f9f9; margin: 20px 0;">
+              <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                <thead>
+                  <tr style="background: #3B82F6; color: white;">
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Section</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Score</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Percentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${results.sections.map(section => `
+                    <tr>
+                      <td style="border: 1px solid #ddd; padding: 10px;">${section.title}</td>
+                      <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${section.totalScore}/${section.maxScore}</td>
+                      <td style="border: 1px solid #ddd; padding: 10px; text-align: center; font-weight: bold; color: ${section.percentage >= 70 ? '#16a34a' : section.percentage >= 50 ? '#f59e0b' : '#ef4444'};">${section.percentage}%</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+              <p style="color: #666; font-size: 12px; margin-top: 15px; font-style: italic;">
+                Note: This table replaces the spider chart visualization for better compatibility with Word format.
+              </p>
             </div>
           </div>
           `}
