@@ -96,11 +96,25 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
     const content = document.getElementById('assessment-results');
     if (!content) return;
 
-    // Create spider chart as base64 image
-    const canvas = document.querySelector('canvas');
+    // Create spider chart as base64 image with better error handling
+    const chartContainer = document.getElementById('spider-chart-container');
+    const canvas = chartContainer?.querySelector('canvas');
     let chartImageData = '';
+    let chartError = false;
+    
     if (canvas) {
-      chartImageData = canvas.toDataURL('image/png');
+      try {
+        // Wait a moment for chart to fully render
+        setTimeout(() => {
+          chartImageData = canvas.toDataURL('image/png', 0.8);
+        }, 100);
+        chartImageData = canvas.toDataURL('image/png', 0.8);
+      } catch (error) {
+        console.error('Error capturing chart:', error);
+        chartError = true;
+      }
+    } else {
+      chartError = true;
     }
 
     const htmlContent = `
@@ -236,7 +250,15 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
             <h2>Performance Overview - Spider Chart</h2>
             <img src="${chartImageData}" alt="EMIS Performance Spider Chart" class="chart-image" />
           </div>
-          ` : ''}
+          ` : `
+          <div class="chart-container">
+            <h2>Performance Overview - Spider Chart</h2>
+            <div style="border: 2px dashed #ccc; padding: 40px; text-align: center; background: #f9f9f9; margin: 20px 0;">
+              <p style="color: #666; font-style: italic;">Spider Chart visualization showing performance across all assessment sections</p>
+              <p style="color: #666; font-size: 12px; margin-top: 10px;">Note: Chart visualization may not display in Word format. Please refer to the detailed section scores below.</p>
+            </div>
+          </div>
+          `}
 
           <h2>Section Performance Analysis</h2>
           ${results.sections.map(section => `
@@ -330,7 +352,7 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
         </div>
 
         {/* Spider Chart */}
-        <div className="mb-8">
+        <div className="mb-8" id="spider-chart-container">
           <h3 className="text-xl font-bold text-gray-900 mb-4">Performance Overview</h3>
           <div className="bg-gray-50 rounded-lg p-6">
             <SpiderChart results={results} />

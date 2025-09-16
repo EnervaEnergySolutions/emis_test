@@ -92,7 +92,7 @@ const SpiderChart: React.FC<SpiderChartProps> = ({ results }) => {
   };
 
   return (
-    <div className="w-full h-96">
+    <div className="w-full h-96" id="spider-chart-canvas-container">
       <Radar data={data} options={options} />
     </div>
   );
