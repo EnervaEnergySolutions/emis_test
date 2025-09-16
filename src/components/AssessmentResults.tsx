@@ -269,7 +269,7 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
                   <strong>${rec.questionTitle}</strong><br/>
                   Selected Answer: ${rec.selectedAnswer} (${rec.score} pts)<br/>
                   ${rec.selectedAnswerDescription ? `Assessment: This facility ${rec.selectedAnswerDescription}<br/>` : ''}
-                  ${rec.conditionalNextStep ? `<em>Next Steps: ${rec.conditionalNextStep}</em>` : '<em>Performance meets recommended thresholds.</em>'}
+                  ${rec.conditionalNextStep ? `<em>Next Steps: ${rec.conditionalNextStep}</em>` : ''}
                 </li>
               `).join('')}
             </ul>
@@ -480,15 +480,6 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
             <button
               onClick={onBack}
               className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-            >
-              Back to Assessment
-            </button>
-            <button
-              onClick={onContinue}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Complete Assessment
-            </button>
           </div>
         </div>
       </div>
