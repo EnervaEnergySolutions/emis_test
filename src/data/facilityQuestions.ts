@@ -221,7 +221,7 @@ Manual data collection and entry systems become unreliable and cannot offer high
     ],
     isSlider: true,
     isPercentageBased: false,
-    sliderLabels: [[
+    sliderLabels: [
   "Fully Automated",
   "Mostly Automated",
   "Monitored Only",
