@@ -260,6 +260,21 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
             </div>
           `).join('')}
 
+          <h2>Detailed Assessment Findings</h2>
+          <div class="recommendation">
+            <h4>Detailed Question Analysis and Next Steps:</h4>
+            <ul>
+              ${results.recommendations.map(rec => `
+                <li>
+                  <strong>${rec.questionTitle}</strong><br/>
+                  Selected Answer: ${rec.selectedAnswer} (${rec.score} pts)<br/>
+                  ${rec.selectedAnswerDescription ? `Assessment: This facility ${rec.selectedAnswerDescription}<br/>` : ''}
+                  ${rec.conditionalNextStep ? `<em>Next Steps: ${rec.conditionalNextStep}</em>` : ''}
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+
           <h2>Next Steps and Implementation Priorities</h2>
           <p>Based on this comprehensive assessment, we recommend focusing on the lowest-scoring sections first. Sections scoring below 70% should be prioritized for immediate improvement. Consider developing an action plan that addresses the specific recommendations for each section.</p>
           
@@ -362,6 +377,36 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
                       </li>
                     ))}
                   </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Specific Facility Findings */}
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Detailed Question Analysis and Next Steps</h3>
+          <div className="space-y-3">
+            {results.recommendations.map((recommendation, index) => (
+              <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                <div className="mb-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">{recommendation.questionTitle}</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-600">Selected Answer: {recommendation.selectedAnswer}</span>
+                    <span className="text-sm font-medium text-blue-600">{recommendation.score} points</span>
+                  </div>
+                  {recommendation.selectedAnswerDescription && (
+                    <p className="text-sm text-gray-700 mb-2">
+                      <strong>Assessment:</strong> This facility {recommendation.selectedAnswerDescription}
+                    </p>
+                  )}
+                  {recommendation.conditionalNextStep && (
+                    <div className="bg-blue-50 border border-blue-200 rounded p-3 mt-2">
+                      <p className="text-sm text-blue-800">
+                        <strong>Next Steps:</strong> {recommendation.conditionalNextStep}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
