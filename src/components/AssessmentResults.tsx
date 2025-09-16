@@ -392,42 +392,6 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
                 <div className="mb-4">
                   <h4 className="text-lg font-semibold text-gray-900 mb-2">{recommendation.questionTitle}</h4>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-700"><strong>Selected Answer:</strong> {recommendation.selectedAnswer}</span>
-                    <span className="text-sm font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
-                      {recommendation.score} pts
-                    </span>
-                  </div>
-                  {recommendation.selectedAnswerDescription && (
-                    <p className="text-gray-600 mb-3">
-                      <strong>Assessment:</strong> This facility {recommendation.selectedAnswerDescription}
-                    </p>
-                  )}
-                </div>
-                
-                {recommendation.conditionalNextStep && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div className="flex items-start space-x-3">
-                      <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-yellow-800 mb-1">Recommended Next Steps:</p>
-                        <p className="text-sm text-yellow-700">{recommendation.conditionalNextStep}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                {!recommendation.conditionalNextStep && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <p className="text-sm text-green-700">Performance meets recommended thresholds.</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* General Section Recommendations */}
         <div className="mb-8">
