@@ -254,7 +254,14 @@ Data entry is an assigned duty with back-up people assigned to cover vacation an
     ],
     isSlider: true,
     isPercentageBased: false,
-    sliderLabels: ['No Database', 'Excel Only', 'Manual Database', 'Partial Auto', 'Fully Automated'],
+    sliderLabels: [
+  "Fully Automated",
+  "Partially Automated",
+  "Manual Database Entry",
+  "Manual Spreadsheet Entry",
+  "No System"
+]
+,
     maxScore: 5
   },
   {
@@ -283,7 +290,14 @@ Score based on impressions of whether any error check systems are in place or re
     ],
     isSlider: true,
     isPercentageBased: false,
-    sliderLabels: ['None', 'Manual Check', 'Manual + Adjust', 'Partial Auto', 'Comprehensive Auto'],
+    sliderLabels: [
+  "Automated Error Flags",
+  "Systematic Cross-Checks",
+  "Manual Validation with Adjustments",
+  "Manual Validation Only",
+  "No Error Checks"
+]
+,
     maxScore: 5
   },
   {
