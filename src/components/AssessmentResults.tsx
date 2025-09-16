@@ -413,21 +413,6 @@ const AssessmentResults: React.FC<AssessmentResultsProps> = ({ results, onBack, 
           </div>
         </div>
 
-        {/* Legacy section for backward compatibility - can be removed if not needed */}
-        <div className="mb-8" style={{ display: 'none' }}>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Legacy Recommendations</h3>
-          <div className="space-y-3">
-            {results.recommendations.map((recommendation, index) => (
-              <div key={index} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-start space-x-3">
-                  <AlertTriangle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-blue-800">Legacy format would go here</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-between pt-6 border-t border-gray-200">
           <div className="flex gap-3">
