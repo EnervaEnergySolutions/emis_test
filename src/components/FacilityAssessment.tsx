@@ -41,13 +41,42 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
     const question = facilityQuestions.find(q => q.id === questionId);
     if (!question) return;
 
-    const selectedOption = question.answerOptions[value];
+    // For percentage-based questions, use the slider value directly
+    if (question.isPercentageBased) {
+      const score = Math.round(value); // 0-5 scale
+      setAnswers(prev => ({
+        ...prev,
+        [questionId]: {
+          questionId,
+          value: `${score}/5 (${Math.round((score/5) * 100)}%)`,
+          score: score
+        }
+      }));
+    } else {
+      const selectedOption = question.answerOptions[value];
+      setAnswers(prev => ({
+        ...prev,
+        [questionId]: {
+          questionId,
+          value: selectedOption.text,
+          score: selectedOption.score
+        }
+      }));
+    }
+  };
+
+  const handlePercentageInput = (questionId: string, percentage: number) => {
+    const question = facilityQuestions.find(q => q.id === questionId);
+    if (!question) return;
+
+    // Convert percentage to 0-5 score
+    const score = Math.round((percentage / 100) * 5);
     setAnswers(prev => ({
       ...prev,
       [questionId]: {
         questionId,
-        value: selectedOption.text,
-        score: selectedOption.score
+        value: `${score}/5 (${percentage}%)`,
+        score: score
       }
     }));
   };
@@ -124,7 +153,11 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
     const question = facilityQuestions.find(q => q.id === questionId);
     if (!question) return 0;
     
-    return question.answerOptions.findIndex(opt => opt.text === answer.value);
+    if (question.isPercentageBased) {
+      return answer.score; // Return the score directly (0-5)
+    } else {
+      return question.answerOptions.findIndex(opt => opt.text === answer.value);
+    }
   };
 
   // Check if question should use slider - only for questions with isSlider: true
@@ -134,6 +167,101 @@ const FacilityAssessment: React.FC<FacilityAssessmentProps> = ({ onComplete }) =
 
   const renderSliderQuestion = (question: any) => {
     const currentValue = getSliderValue(question.id);
+    const currentAnswer = answers[question.id];
+    
+    // Handle percentage-based questions differently
+    if (question.isPercentageBased) {
+      return (
+        <div className="bg-gray-50 rounded-lg p-6">
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-gray-900">{question.title}</h3>
+              <button
+                onClick={() => setShowDetails(showDetails === question.id ? null : question.id)}
+                className="flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+              >
+                <Info className="h-4 w-4" />
+                <span>Details</span>
+              </button>
+            </div>
+            
+            {question.nextSteps && (
+              <div className="flex items-start space-x-2 bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-yellow-800">Next Steps</p>
+                  <p className="text-sm text-yellow-700">{question.nextSteps}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <h4 className="font-medium text-blue-900 mb-2">Assessment Method:</h4>
+              <p className="text-sm text-blue-800 mb-3">
+                Calculate the percentage based on the criteria below, then use the slider to set your score (0-5).
+              </p>
+              
+              <div className="space-y-2 mb-4">
+                <label className="block text-sm font-medium text-blue-900">
+                  Enter calculated percentage:
+                </label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    className="w-20 px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="0-100"
+                    onChange={(e) => {
+                      const percentage = parseInt(e.target.value) || 0;
+                      handlePercentageInput(question.id, Math.min(100, Math.max(0, percentage)));
+                    }}
+                  />
+                  <span className="text-sm text-blue-700">%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Score (0-5):
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="5"
+                step="1"
+                value={currentValue}
+                onChange={(e) => handleSliderChange(question.id, parseInt(e.target.value))}
+                className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              />
+              <div className="flex justify-between text-xs text-gray-600 mt-2 px-1">
+                {[0, 1, 2, 3, 4, 5].map((score) => (
+                  <span key={score} className="text-center">
+                    {score}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            {currentAnswer && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium text-blue-900">Current Selection: {currentAnswer.value}</span>
+                  <span className="text-sm font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                    {currentAnswer.score} pts
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+    
+    // Regular slider questions
     const currentOption = question.answerOptions[currentValue];
     
     return (
