@@ -221,7 +221,15 @@ Manual data collection and entry systems become unreliable and cannot offer high
     ],
     isSlider: true,
     isPercentageBased: false,
-    sliderLabels: ['Not Functional', 'Manual Only', 'Manual + Database', 'Partial Auto', 'Mostly Auto', 'Fully Automated'],
+    sliderLabels: [
+  "Fully Automated",
+  "Mostly Automated",
+  "Monitored Only",
+  "Manual with Database",
+  "Manual Only",
+  "No Meters"
+]
+,
     maxScore: 5
   },
   {
